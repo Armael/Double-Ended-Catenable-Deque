@@ -282,7 +282,7 @@ sandwich_seq (Sandwich x b y) := prodN_seq x ++ buffer_seq b ++ prodN_seq y.
 Equations deque_seq {A size} : deque A size -> list A :=
 deque_seq (T dq) := cdeque_seq dq.
 
-Unset Equations Transparent.
+(* Unset Equations Transparent. *)
 
 (* Sequence mappings *)
 
@@ -335,7 +335,7 @@ Definition map_deque {T : Type -> nat -> Type} {A : Type}
 
 Lemma div_app2 {A : Type} {l1 l1' l2 l2' : list A} : 
     l1 = l1' -> l2 = l2' -> l1 ++ l2 = l1' ++ l2'.
-Proof. intros [] []; reflexivity. Qed.
+Proof. intros [] []; reflexivity. Defined.
 
 (* A tactic that cleans the removes the useless hypothesis. *)
 
@@ -385,7 +385,7 @@ Proof.
   end);
   (* Finish all the cases with hauto. *)
   cbn; hauto db:rlist.
-Qed.
+Defined.
 
 Notation "? x" := (@exist _ _ x _) (at level 100).
 
@@ -394,7 +394,7 @@ Notation "? x" := (@exist _ _ x _) (at level 100).
 (* Proves that for any natural number [n], [power2 n] is different from 0. *)
 
 Lemma power2_neq0 {n : nat} : power2 n <> 0.
-Proof. induction n; simpl; lia. Qed.
+Proof. induction n; simpl; lia. Defined.
 
 (* Takes a product and links its level to the length of its sequence. *)
 
@@ -407,7 +407,7 @@ Proof.
     rewrite app_length;
     rewrite IHp1; rewrite IHp2;
     reflexivity.
-Qed.
+Defined.
 
 (* Takes an option of products and links its level and size to the length of its 
    sequence. *)
@@ -417,19 +417,19 @@ Lemma option_size {A lvl} (o : option (prodN A lvl)) :
 Proof. 
   destruct o; simp option_seq; try reflexivity; 
   simp size_option; rewrite Nat.mul_1_l; apply prodN_size.
-Qed.
+Defined.
 
 (* Takes a buffer and links its level and size to the length of its sequence. *)
 
 Lemma buffer_size {A lvl size C} (b : buffer A lvl size C) :
     length (buffer_seq b) = size * power2 lvl.
 Proof.
-  dependent destruction b;
+  dependent elimination b;
   simp buffer_seq;
   repeat rewrite app_length;
   repeat rewrite prodN_size; 
   cbn; lia.
-Qed.
+Defined.
 
 (* Proves that if a buffer is empty, its size is 0. *)
 
@@ -440,7 +440,7 @@ Proof.
   apply Nat.mul_eq_0_l in e.
   - assumption.
   - apply power2_neq0.
-Qed.
+Defined.
 
 (* Takes a packet and links its level and size to the length of its sequence. *)
 
@@ -456,13 +456,13 @@ Proof.
     repeat rewrite buffer_size;
     do 2 rewrite Nat.mul_add_distr_r;
     rewrite IHpkt; cbn; lia.
-Qed.
+Defined.
 
 (* A simple lemma to better control list concatenation. *)
 
 Lemma app_cons {A : Type} (a : A) (l : list A) :
     a :: l = [a] ++ l.
-Proof. reflexivity. Qed.
+Proof. reflexivity. Defined.
 
 (* Proves the commutation of list under the length function. *)
 
@@ -471,7 +471,7 @@ Lemma length_app_comm {A : Type} (l1 l2 : list A) :
 Proof.
   induction l1 as [ | a l1]; try rewrite app_cons; 
   repeat rewrite app_length; lia.
-Qed.
+Defined.
 
 (* Proves that 2 ^ (n + m) is indeed equal to 2 ^ n * 2 ^ m. *)
 
@@ -480,7 +480,7 @@ Proof.
   induction n; simpl.
   - lia.
   - rewrite IHn Nat.mul_add_distr_r; reflexivity.
-Qed.
+Defined.
 
 (* Takes a colored deque and links its level and size to the length of its
    sequence. *)
@@ -492,12 +492,12 @@ Proof.
   - apply buffer_size.
   - rewrite app_assoc length_app_comm app_assoc app_length length_app_comm packet_size;
     rewrite IHcd e e0 power2_add; lia.
-Qed.
+Defined.
 
 (* Takes a deque and links its size to the length of its sequence. *)
 
 Lemma deque_size {A size} (d : deque A size) : length (deque_seq d) = size.
-Proof. destruct d; simp deque_seq; rewrite cdeque_size; simpl; lia. Qed.
+Proof. destruct d; simp deque_seq; rewrite cdeque_size; simpl; lia. Defined.
 
 (* Elements *)
 
@@ -772,9 +772,9 @@ buffer_translate b eq_refl := ? b.
 Local Ltac destruct_opt_buff :=
   do 7 (try match goal with
   | o : option _ |- _ => destruct o
-  | b : buffer _ _ _ green |- _ => dependent destruction b
-  | b : buffer _ _ _ (Mix _ _ NoRed) |- _ => dependent destruction b
-  | b : buffer _ _ _ _ |- _ => dependent destruction b
+  | b : buffer _ _ _ green |- _ => dependent elimination b
+  | b : buffer _ _ _ (Mix _ _ NoRed) |- _ => dependent elimination b
+  | b : buffer _ _ _ _ |- _ => dependent elimination b
   end; cbn; try reflexivity).
 
 #[local] Obligation Tactic :=
@@ -804,7 +804,7 @@ green_prefix_concat buf1 buf2 with prefix_decompose buf1 => {
   | ? Overflow buf ab with buffer_translate buf _, green_push ab buf2 => {
     | ? buf', ? suffix with buffer_translate suffix _ => {
       | ? suffix' := ? (buf', Yellowish suffix') } } }.
-Next Obligation. Qed.
+(* Next Obligation. Defined. *)
 
 (* Takes a green (n+1)-buffer and any n-buffer, and rearranges elements 
    contained in the two buffers to return a yellow (n+1)-buffer and a green 
@@ -827,7 +827,7 @@ green_suffix_concat buf1 buf2 with suffix_decompose buf2 => {
   | ? Overflow buf ab with green_inject buf1 ab, buffer_translate buf _ => {
     | ? prefix, ? buf' with buffer_translate prefix _ => {
       | ? prefix' := ? (Yellowish prefix', buf') } } }.
-Next Obligation. Qed.
+(* Next Obligation. Defined. *)
 
 (* Takes any n-buffer and a yellow (n+1)-buffer, and rearranges elements 
    contained in the two buffers to return a green n-buffer and any (n+1)-buffer. 
@@ -850,7 +850,8 @@ yellow_prefix_concat buf1 (Yellowish buf2) with prefix_decompose buf1 => {
   | ? Overflow buf ab with buffer_translate buf _, yellow_push ab (Yellowish buf2) => {
     | ? buf', ? Any suffix with buffer_translate suffix _ => {
       | ? suffix' := ? (buf', Any suffix') } } }.
-Next Obligation. Qed.
+(* Next Obligation. *)
+(* Defined. *)
 
 (* Takes a yellow (n+1)-buffer and any n-buffer, and rearranges elements 
    contained in the two buffers to return any (n+1)-buffer and a green n-buffer. 
@@ -873,7 +874,7 @@ yellow_suffix_concat (Yellowish buf1) buf2 with suffix_decompose buf2 => {
   | ? Overflow buf ab with yellow_inject (Yellowish buf1) ab, buffer_translate buf _ => {
     | ? Any prefix, ? buf' with buffer_translate prefix _ => {
       | ? prefix' := ? (Any prefix', buf') } } }.
-Next Obligation. Qed.
+(* Next Obligation. Defined. *)
 
 (* Creates a green colored deque from three options, two of level n and one of 
    level n+1. *)
@@ -907,8 +908,8 @@ cdeque_translate cd eq_refl := ? cd.
 Local Ltac destruct_prod :=
   repeat 
   match goal with 
-  | a : prodN _ 0 |- _ => dependent destruction a
-  | ab : prodN _ (S _) |- _ => dependent destruction ab
+  | a : prodN _ 0 |- _ => dependent elimination a
+  | ab : prodN _ (S _) |- _ => dependent elimination ab
   | p : _ * _ |- _ => destruct p
   end; cbn in *.
 
@@ -926,13 +927,13 @@ Local Ltac to_size H :=
 (* Small lemmas needed for the next tactics. *)
 
 Lemma add_r {n m p : nat} : n + p = m + p -> n = m.
-Proof. lia. Qed.
+Proof. lia. Defined.
 
 Lemma add_r_0 {m p : nat} : p = m + p -> 0 = m.
-Proof. lia. Qed.
+Proof. lia. Defined.
 
 Lemma add_l_0 {n p : nat} : n + p = p -> n = 0.
-Proof. lia. Qed.
+Proof. lia. Defined.
 
 (* A new tactic [absurd_power2_eq] is introduced. It aims at showing that an 
    equality of sums of powers of 2 is wrong. *)
@@ -1014,41 +1015,41 @@ make_small prefix1 buf suffix1
 Next Obligation.
   to_size e1; destruct_opt_buff; simpl in e1; rewrite Nat.add_0_r in e1;
   absurd_power2_eq.
-Qed.
+Defined.
 Next Obligation.
   apply empty_buffer_size in e1; subst; reflexivity.
-Qed.
+Defined.
 Next Obligation.
   to_size e1; destruct_opt_buff; simpl in e1; rewrite Nat.add_0_r in e1;
   absurd_power2_eq.
-Qed.
+Defined.
 Next Obligation.
   apply empty_buffer_size in e1; subst; reflexivity.
-Qed.
+Defined.
 Next Obligation.
   simp cdeque_seq packet_front_seq packet_rear_seq;
   destruct_prod; rewrite e1; aac_rewrite <-y; hauto db:rlist.
-Qed.
+Defined.
 Next Obligation.
   to_size e1; destruct_opt_buff; simpl in e1; absurd_power2_eq.
-Qed.
+Defined.
 Next Obligation.
   apply empty_buffer_size in e1; subst; lia.
-Qed.
+Defined.
 Next Obligation.
   to_size e1; destruct_opt_buff; simpl in e1; absurd_power2_eq.
-Qed.
+Defined.
 Next Obligation.
   apply empty_buffer_size in e1; subst; lia.
-Qed.
+Defined.
 Next Obligation.
   simp cdeque_seq packet_front_seq packet_rear_seq;
   destruct_prod; rewrite e1; aac_rewrite <-y; hauto db:rlist.
-Qed.
+Defined.
 Next Obligation.
   to_size y; destruct_opt_buff; simp size_option in y; 
   simpl in y; autorewrite with rnat in y; absurd_power2_eq.
-Qed.
+Defined.
 
 (* Takes a red cdeque and returns a green one representing the same set. *)
 
@@ -1072,12 +1073,12 @@ green_of_red
     | ? (p1', Yellowish p2'), ? (Yellowish s2', s1') :=
     ? Big (Triple p1' (Triple p2' child s2' PCYellow) s1' PCGreen) cd _ _ CCGreen }.
 Next Obligation.
-  dependent destruction p1; dependent destruction s1;
+  dependent elimination p1; dependent elimination s1;
   (match goal with 
   | b : buffer _ _ psize0 _ |- _ => 
-    dependent destruction b end);
-  dependent destruction s2; simpl; lia.
-Qed.
+    dependent elimination b end);
+  dependent elimination s2; simpl; lia.
+Defined.
 Next Obligation.
   simp cdeque_seq packet_front_seq packet_rear_seq;
   autorewrite with rlist;
@@ -1085,14 +1086,14 @@ Next Obligation.
   aac_rewrite <-y; aac_normalise; 
   do 5 apply <-app_inv_head_iff;
   symmetry; assumption.
-Qed.
+Defined.
 Next Obligation. 
-  dependent destruction p1; dependent destruction s1; 
+  dependent elimination p1; dependent elimination s1;
   (match goal with 
   | b : buffer _ _ psize0 _ |- _ => 
-    dependent destruction b end);
-  dependent destruction s2; simpl; lia.
-Qed.
+    dependent elimination b end);
+  dependent elimination s2; simpl; lia.
+Defined.
 Next Obligation.
   simp cdeque_seq packet_front_seq packet_rear_seq;
   autorewrite with rlist;
@@ -1100,7 +1101,7 @@ Next Obligation.
   aac_rewrite <-y; aac_normalise; 
   do 5 apply <-app_inv_head_iff;
   symmetry; assumption.
-Qed.
+Defined.
 
 (* Takes a green or red cdeque, and returns a green one representing
    the same set. *)
@@ -1217,7 +1218,7 @@ pop d with unsafe_pop d => {
   | ? Some (x, d') := ? (x, d') }.
 Next Obligation.
   to_size e; apply Nat.neq_succ_0 in e; destruct e.
-Qed.
+Defined.
 
 (* Ejects an element from a deque. *)
 
@@ -1245,4 +1246,4 @@ eject d with unsafe_eject d => {
   | ? Some (d', x) := ? (d', x) }.
 Next Obligation.
   to_size e; apply Nat.neq_succ_0 in e; destruct e.
-Qed.
+Defined.

@@ -10,6 +10,8 @@ Import Instances.Lists.
 From Deque Require Import ncdeque.
 From Deque Require Import buffer.
 
+Set Equations Transparent.
+
 (* Types *)
 
 Inductive preferred_child : Type :=
@@ -444,7 +446,7 @@ unstored_sandwich_seq (Unstored_sandwich p sd s) :=
 Equations deque_seq {A} : deque A -> list A :=
 deque_seq (T cd) := cdeque_seq cd.
 
-Unset Equations Transparent.
+(* Unset Equations Transparent. *)
 
 (* The list application is made opaque. *)
 

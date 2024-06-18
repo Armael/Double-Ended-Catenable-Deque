@@ -6,6 +6,8 @@ From Hammer Require Import Tactics.
 
 From Deque Require Import ncdeque.
 
+Set Equations Transparent.
+
 (* Types *)
 
 Inductive vector (A : Type) : nat -> Type := 
@@ -49,7 +51,7 @@ vector_seq (V4 a b c d) := [a] ++ [b] ++ [c] ++ [d];
 vector_seq (V5 a b c d e) := [a] ++ [b] ++ [c] ++ [d] ++ [e];
 vector_seq (V6 a b c d e f) := [a] ++ [b] ++ [c] ++ [d] ++ [e] ++ [f].
 
-Unset Equations Transparent.
+(* Unset Equations Transparent. *)
 
 (* Sequence mappings *)
 
@@ -66,16 +68,16 @@ Lemma correct_mapping {T : Type -> nat -> Type} {A : Type}
   {lvl q : nat}
   (b : t (T A lvl) q) :
   map_buffer (@f) b = concat (map f (seq b)).
-Proof. destruct b; cbn; apply ncdeque.correct_mapping. Qed.
+Proof. destruct b; cbn; apply ncdeque.correct_mapping. Defined.
 
 (* Lemmas *)
 
 Lemma empty_buffer [A] (b : t A 0) : seq b = [].
 Proof.
-  dependent destruction b; simp seq;
+  dependent elimination b; simp seq;
   apply length_zero_iff_nil;
   rewrite deque_size; reflexivity.
-Qed.
+Defined.
 
 Equations length_app_last [A : Type] (a : A) (l : list A) : length (l ++ [a]) = S (length l) :=
 length_app_last _ [] := eq_refl;

@@ -10,6 +10,8 @@ Import Instances.Lists.
 From Deque Require Import ncdeque.
 From Deque Require Import buffer.
 
+Set Equations Transparent.
+
 (* Types *)
 
 Inductive preferred_child : Type :=
@@ -354,7 +356,7 @@ Lemma correct_path_buffer_seq {A lvl q} (b : buffer.t (stored_triple A lvl) q) :
 Proof.
   unfold path_buffer_seq; simp buffer_seq. 
   rewrite buffer.correct_mapping. reflexivity.
-Qed.
+Defined.
 
 Fixpoint triple_front_seq {A lvl len K1 K2 C} (t : triple A lvl len K1 K2 C) : list A :=
   let packet_front_seq {lvl len pc K} (pkt : packet A lvl len pc K) : list A :=
@@ -444,7 +446,7 @@ unstored_sandwich_seq (Unstored_sandwich p sd s) :=
 Equations deque_seq {A} : deque A -> list A :=
 deque_seq (T cd) := cdeque_seq cd.
 
-Unset Equations Transparent.
+(* Unset Equations Transparent. *)
 
 (* The list application is made opaque. *)
 
@@ -467,14 +469,14 @@ Lemma path_children [A lvl nlvl len K1 K2 G Y O R]
   (e : nlvl = len + lvl) :
   path_seq (Children natur adopt e) = 
     triple_front_seq natur ++ triple_seq adopt ++ triple_rear_seq natur.
-Proof. subst; simp triple_seq; autorewrite with rlist; reflexivity. Qed.
+Proof. subst; simp triple_seq; autorewrite with rlist; reflexivity. Defined.
 
 Lemma stored_triple_ground [A] (a : A) : stored_triple_seq (ST_ground a) = [a].
-Proof. simpl; reflexivity. Qed.
+Proof. simpl; reflexivity. Defined.
 
 Lemma stored_triple_small [A lvl q] (p : prefix A lvl (3 + q)) : 
   stored_triple_seq (ST_small p) = buffer_seq p.
-Proof. apply buffer.correct_mapping. Qed.
+Proof. apply buffer.correct_mapping. Defined.
   
 Lemma stored_triple_triple [A lvl qp qs C] 
   (p : prefix A lvl (3 + qp)) 
@@ -490,27 +492,27 @@ Proof.
   try reflexivity;
   (* Finish with the buffers. *)
   apply buffer.correct_mapping.
-Qed.
+Defined.
 
 Lemma triple_front_hole (A : Type) (lvl : nat) (K : kind) : 
   triple_front_seq (A := A) (lvl := lvl) (K1 := K) Hole = [].
-Proof. reflexivity. Qed.
+Proof. reflexivity. Defined.
 
 Lemma triple_rear_hole (A : Type) (lvl : nat) (K : kind) :
   triple_rear_seq (A := A) (lvl := lvl) (K1 := K) Hole = [].
-Proof. reflexivity. Qed.
+Proof. reflexivity. Defined.
 
 Lemma triple_front_small [A lvl qp qs K] 
   (p : prefix A lvl qp) (s : suffix A lvl qs) 
   (ss : small_triple_size qp qs K) :
   triple_front_seq (Small p s ss) = buffer_seq p.
-Proof. cbn; apply correct_path_buffer_seq. Qed.
+Proof. cbn; apply correct_path_buffer_seq. Defined.
   
 Lemma triple_rear_small [A lvl qp qs K] 
   (p : prefix A lvl qp) (s : suffix A lvl qs) 
   (ss : small_triple_size qp qs K) :
   triple_rear_seq (Small p s ss) = buffer_seq s.
-Proof. cbn; apply correct_path_buffer_seq. Qed.
+Proof. cbn; apply correct_path_buffer_seq. Defined.
 
 Lemma triple_front_green [A lvl qp qs K G R] 
   (p : prefix A lvl qp) 
@@ -522,7 +524,7 @@ Proof.
   cbn; apply div_app2. 
   - apply correct_path_buffer_seq.
   - reflexivity.
-Qed.
+Defined.
 
 Lemma triple_rear_green [A lvl qp qs K G R] 
   (p : prefix A lvl qp) 
@@ -530,7 +532,7 @@ Lemma triple_rear_green [A lvl qp qs K G R]
   (s : suffix A lvl qs)
   (bs : big_triple_size 8 qp qs K) :
   triple_rear_seq (Green p cd s bs) = buffer_seq s.
-Proof. cbn; apply correct_path_buffer_seq. Qed.
+Proof. cbn; apply correct_path_buffer_seq. Defined.
 
 Lemma triple_front_yellow [A lvl len qp qs K1 K2] 
   (p : prefix A lvl qp)
@@ -542,7 +544,7 @@ Proof.
   cbn; apply div_app2.
   - apply correct_path_buffer_seq.
   - reflexivity.
-Qed.
+Defined.
 
 Lemma triple_rear_yellow [A lvl len qp qs K1 K2] 
   (p : prefix A lvl qp)
@@ -554,7 +556,7 @@ Proof.
   cbn; apply div_app2.
   - reflexivity.
   - apply correct_path_buffer_seq.
-Qed.
+Defined.
 
 Lemma triple_front_orange [A lvl len qp qs K1 K2] 
   (p : prefix A lvl qp)
@@ -566,7 +568,7 @@ Proof.
   cbn; apply div_app2.
   - apply correct_path_buffer_seq.
   - reflexivity.
-Qed.
+Defined.
 
 Lemma triple_rear_orange [A lvl len qp qs K1 K2] 
   (p : prefix A lvl qp)
@@ -578,7 +580,7 @@ Proof.
   cbn; apply div_app2.
   - reflexivity.
   - apply correct_path_buffer_seq.
-Qed.
+Defined.
 
 Lemma triple_front_red [A lvl qp qs K] 
   (p : prefix A lvl qp) 
@@ -590,7 +592,7 @@ Proof.
   cbn; apply div_app2.
   - apply correct_path_buffer_seq.
   - reflexivity.
-Qed.
+Defined.
 
 Lemma triple_rear_red [A lvl qp qs K] 
   (p : prefix A lvl qp) 
@@ -598,7 +600,7 @@ Lemma triple_rear_red [A lvl qp qs K]
   (s : suffix A lvl qs)
   (bs : big_triple_size 5 qp qs K) :
   triple_rear_seq (Red p cd s bs) = buffer_seq s.
-Proof. cbn; apply correct_path_buffer_seq. Qed.
+Proof. cbn; apply correct_path_buffer_seq. Defined.
       
 #[export] Hint Rewrite path_children : rlist.
 #[export] Hint Rewrite stored_triple_ground : rlist.
@@ -1084,13 +1086,13 @@ left_of_pair (Children Hole (Red p cd s BLeft) eq_refl) pr
   with buffer.two s => { | ? (x1, x2) with extract_stored_right (x1, V1 x2) pr => {
     | ? (stored, s') with inject_ne_cdeque cd stored => {
       | ? cd' := ? Children Hole (Red p cd' s' BLeft) eq_refl } } }.
-Next Obligation. Qed.
+Next Obligation. Defined.
 Next Obligation.
   aac_rewrite y1; rewrite <-y; hauto db:rlist.
-Qed.
+Defined.
 Next Obligation.
   aac_rewrite y1; rewrite <-y; hauto db:rlist.
-Qed.
+Defined.
 
 Equations right_of_pair {A lvl C1 C2} 
   (pl : path A lvl Left C1) (pr : path A lvl Right C2) :
@@ -1118,19 +1120,19 @@ right_of_pair pl (Children Hole (Red p cd s BRight) eq_refl)
       | ? cd' := ? Children Hole (Red p' cd' s BRight) eq_refl } } }.
 Next Obligation.
   aac_rewrite e0; aac_rewrite y0; hauto db:rlist.
-Qed.
+Defined.
 Next Obligation.
   aac_rewrite e; aac_rewrite y0; hauto db:rlist.
-Qed.
+Defined.
 Next Obligation.
   aac_rewrite e; aac_rewrite y0; hauto db:rlist.
-Qed.
+Defined.
 Next Obligation.
   aac_rewrite y1; aac_rewrite y0; hauto db:rlist.
-Qed.
+Defined.
 Next Obligation.
   aac_rewrite y1; aac_rewrite y0; hauto db:rlist.
-Qed.
+Defined.
 
 Equations left_of_only {A lvl C} (p : path A lvl Only C) :
   { p' : path_attempt A lvl Left C | path_attempt_seq p' = path_seq p } :=
@@ -1157,10 +1159,10 @@ left_of_only (Children Hole (Red p cd s BOnly) eq_refl)
       | ? cd' := ? Ok (Children Hole (Red p cd' s' BLeft) eq_refl) } } }.
 Next Obligation.
   aac_rewrite y0; hauto db:rlist.
-Qed.
+Defined.
 Next Obligation.
   aac_rewrite y0; hauto db:rlist.
-Qed.
+Defined.
 
 Equations right_of_only {A lvl C} (p : path A lvl Only C) :
   { p' : path_attempt A lvl Right C | path_attempt_seq p' = path_seq p } :=
@@ -1187,10 +1189,10 @@ right_of_only (Children Hole (Red p cd s BOnly) eq_refl)
       | ? cd' := ? Ok (Children Hole (Red p' cd' s BRight) eq_refl) } } }.
 Next Obligation.
   aac_rewrite y0; hauto db:rlist.
-Qed.
+Defined.
 Next Obligation.
   aac_rewrite y0; hauto db:rlist.
-Qed.
+Defined.
 
 Equations make_left {A lvl C} (cd : cdeque A lvl C) :
   { p : path_attempt A lvl Left C | path_attempt_seq p = cdeque_seq cd } :=
@@ -1266,7 +1268,7 @@ semi_of_left (Children Hole (Red p cd s BLeft) eq_refl) x1 x2 x3 x4 x5 x6
     ? Sd (NonEmpty (Only_path (Children Hole (Red p cd s' BOnly) eq_refl))) }.
 Next Obligation. 
   rewrite <-y; hauto db:rlist.
-Qed.
+Defined.
 
 Equations semi_of_right {A lvl C} 
   (x1 x2 x3 x4 x5 x6 : stored_triple A lvl) 
@@ -1316,10 +1318,10 @@ pop_green_left (Children (Yellow p pkt s BLeft) t eq_refl)
 pop_green_left (Children (Orange p pkt s BLeft) t eq_refl)
   with buffer.pop p => { | ? (x, p1) with no_pref pkt t _ => {
     | ? cd := ? (x, AnyColor (Children Hole (Red p1 cd s BLeft) eq_refl)) } }.
-Next Obligation. Qed.
+Next Obligation. Defined.
 Next Obligation. 
   aac_rewrite e; hauto db:rlist.
-Qed.
+Defined.
 
 Equations eject_green_right {A lvl} (p : path A lvl Right green) :
   { '(p', x) : path_uncolored A lvl Right * stored_triple A lvl |
@@ -1340,10 +1342,10 @@ eject_green_right (Children (Yellow p pkt s BRight) t eq_refl)
 eject_green_right (Children (Orange p pkt s BRight) t eq_refl)
   with buffer.eject s => { | ? (s1, x) with no_pref pkt t _ => {
     | ? cd := ? (AnyColor (Children Hole (Red p cd s1 BRight) eq_refl), x) } }.
-Next Obligation. Qed.
+Next Obligation. Defined.
 Next Obligation.
   aac_rewrite e; hauto db:rlist.
-Qed.
+Defined.
 
 Equations pop_green {A lvl} (cd : non_empty_cdeque A lvl green) :
   { '(x, sd) : stored_triple A lvl * sdeque A lvl | 
@@ -1369,10 +1371,10 @@ pop_green (Pair_green pl pr) with pop_green_left pl => {
   | ? (x, Six x1 x2 x3 x4 x5 x6) with semi_of_right x1 x2 x3 x4 x5 x6 pr => {
     | ? sd := ? (x, sd) };
   | ? (x, AnyColor pl') := ? (x, Sd (NonEmpty (Pair_red pl' pr))) }.
-Next Obligation. Qed.
+Next Obligation. Defined.
 Next Obligation.
   aac_rewrite e; hauto db:rlist.
-Qed.
+Defined.
 
 Equations eject_green {A lvl} (cd : non_empty_cdeque A lvl green) :
   { '(sd, x) : sdeque A lvl * stored_triple A lvl | 
@@ -1398,10 +1400,10 @@ eject_green (Pair_green pl pr) with eject_green_right pr => {
   | ? (Six x1 x2 x3 x4 x5 x6, x) with semi_of_left pl x1 x2 x3 x4 x5 x6 => {
     | ? sd := ? (sd, x) };
   | ? (AnyColor pr', x) := ? (Sd (NonEmpty (Pair_red pl pr')), x) }.
-Next Obligation. Qed.
+Next Obligation. Defined.
 Next Obligation. 
   aac_rewrite e; hauto db:rlist.
-Qed.
+Defined.
 
 Equations pop_stored {A lvl} (cd : non_empty_cdeque A (S lvl) green) :
   { uns : unstored A lvl | 
@@ -1466,15 +1468,15 @@ unsandwich_green (Pair_green pl pr) with pop_green_left pl => {
 Next Obligation.
   rewrite buffer.empty_buffer.
   rewrite <-y; rewrite <-e; hauto db:rlist.
-Qed.
+Defined.
 Next Obligation.
   rewrite buffer.empty_buffer.
   rewrite <-y; rewrite <-e; hauto db:rlist.
-Qed.
-Next Obligation. Qed.
+Defined.
+Next Obligation. Defined.
 Next Obligation.
   aac_rewrite e; hauto db:rlist.
-Qed.
+Defined.
 
 Equations unsandwich_stored {A lvl} (cd : non_empty_cdeque A (S lvl) green) :
   { us : unstored_sandwich A lvl | unstored_sandwich_seq us = ne_cdeque_seq cd } :=
@@ -1553,10 +1555,10 @@ green_of_red_only (Red p cd s BOnly) with buffer.has8 p, buffer.has8 s => {
     | ? Unstored s1 sd with buffer.inject5_vector s1 y1 y2 y3 y4 y5 vs => {
       | ? s2 with only_green p1 sd s2 => { | ? t := ? t } } };
   | ? inr p1, ? inr s1 := ? Green p1 cd s1 BOnly }.
-Next Obligation. Qed.
-Next Obligation. Qed.
-Next Obligation. Qed.
-Next Obligation. Qed.
+Next Obligation. Defined.
+Next Obligation. Defined.
+Next Obligation. Defined.
+Next Obligation. Defined.
 
 Equations green_of_red_left {A lvl} (t : triple A lvl 0 Left Left red) :
   { t' : triple A lvl 0 Left Left green | triple_seq t' = triple_seq t } :=
@@ -1577,8 +1579,8 @@ green_of_red_right (Red p cd s BRight) with buffer.has8 s => {
         | Empty := ? Small p s2 SRight;
         | NonEmpty cd1' := ? Green p cd1' s2 BRight } } };
   | ? inr s1 := ? Green p cd s1 BRight }.
-Next Obligation. Qed.
-Next Obligation. Qed.
+Next Obligation. Defined.
+Next Obligation. Defined.
 
 #[local] Obligation Tactic :=
   try first [ done | 
